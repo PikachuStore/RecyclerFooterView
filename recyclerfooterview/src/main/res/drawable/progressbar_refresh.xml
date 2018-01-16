@@ -5,13 +5,13 @@
     android:pivotY="50%"
     android:toDegrees="720">
     <shape
-        android:innerRadius="10dp"
+        android:innerRadius="6dp"
         android:shape="ring"
-        android:thickness="3dp"
+        android:thickness="1dp"
         android:useLevel="false">
         <gradient
-            android:centerColor="#4DB6AC"
-            android:endColor="#4DB6AC"
+            android:centerColor="#a4a9b0"
+            android:endColor="#a4a9b0"
             android:startColor="#FFF"
             android:type="sweep" />
     </shape>

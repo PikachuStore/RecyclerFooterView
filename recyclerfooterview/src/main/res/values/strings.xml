@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RefreshRecyclerView</string>
+    <string name="end_discribe">我是有底线的</string>
+    <string name="loading">加载中...</string>
 </resources>
