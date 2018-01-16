@@ -2,6 +2,7 @@ package org.macpro.recyclerfooterview;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -137,12 +138,17 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
         }
     }
 
+
+    //用来标记是否正在向上滑动
+    private boolean isSlidingUpward = false;
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mRecyclerView = recyclerView;
 
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+
         if (manager instanceof GridLayoutManager) {
             final GridLayoutManager gridManager = ((GridLayoutManager) manager);
             gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -154,7 +160,45 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
             });
         }
 
+
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                // 当不滑动时
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    //获取最后一个完全显示的itemPosition
+                    int lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+                    int itemCount = layoutManager.getItemCount();
+
+                    // 判断是否滑动到了最后一个item，并且是向上滑动
+                    if (lastItemPosition == (itemCount - 1) && isSlidingUpward) {
+                        //加载更多
+                        onLoadMore();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // 大于0表示正在向上滑动，小于等于0表示停止或向下滑动
+                isSlidingUpward = dy > 0;
+            }
+        });
     }
+
+
+    /**
+     * 加载更多回调
+     */
+    public abstract void onLoadMore();
 
     // 添加数据源
     public void addData(List<T> data) {
