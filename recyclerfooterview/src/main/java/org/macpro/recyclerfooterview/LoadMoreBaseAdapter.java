@@ -32,6 +32,7 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
     private int mLayoutResId;
     private RecyclerView mRecyclerView;
     private OnItemClickListener listener;
+    private OnLoadMoreListener loadMoreListener;
     private Context mContext;
 
 
@@ -178,7 +179,7 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
                     // 判断是否滑动到了最后一个item，并且是向上滑动
                     if (lastItemPosition == (itemCount - 1) && isSlidingUpward) {
                         //加载更多
-                        onLoadMore();
+                        loadMoreListener.onloadMore();
                     }
                 }
 
@@ -195,10 +196,6 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
     }
 
 
-    /**
-     * 加载更多回调
-     */
-    public abstract void onLoadMore();
 
     // 添加数据源
     public void addData(List<T> data) {
@@ -313,6 +310,15 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
         void onClick(T t, int position);
     }
 
+    public interface OnLoadMoreListener {
+        // 传递当前点击的对象（List对应位置的数据）与位置
+        void onloadMore();
+    }
+
+    // 设置Item的点击事件
+    public void setOnLoadMoreListener(OnLoadMoreListener listener) {
+        this.loadMoreListener = listener;
+    }
 
     /**
      * 设置上拉加载状态
