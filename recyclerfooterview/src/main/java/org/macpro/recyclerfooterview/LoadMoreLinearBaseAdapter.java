@@ -24,19 +24,23 @@ import java.util.Map;
 /**
  * Created by Konfyt on 2016/9/14.
  */
-public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMoreBaseAdapter.ViewHolder> implements View.OnClickListener {
+public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<LoadMoreLinearBaseAdapter.ViewHolder> implements View.OnClickListener {
 
-    // 因为是个基类所以不能用private
+    // 数据源
     private List<T> mDatas;
+    // 布局填充器
     private LayoutInflater mInflater;
+    // item的布局资源
     private int mLayoutResId;
+    // Attach的RecyclerView
     private RecyclerView mRecyclerView;
-    private OnItemClickListener listener;
-    private OnLoadMoreListener loadMoreListener;
+    // item的点击事件
+    private OnItemClickListener mListener;
+    // 上下文对象
     private Context mContext;
 
 
-    // 普通布局
+    // 默认布局
     private final int TYPE_ITEM = 1;
     // 脚布局
     private final int TYPE_FOOTER = 2;
@@ -57,7 +61,7 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
 
 
 
-    public LoadMoreBaseAdapter(Context context, int layoutResId) {
+    public LoadMoreLinearBaseAdapter(Context context, int layoutResId) {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayoutResId = layoutResId;
         mDatas = new ArrayList<>();
@@ -65,22 +69,29 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
     }
 
 
-    public LoadMoreBaseAdapter(Context context, int layoutResId, List<T> list) {
+    public LoadMoreLinearBaseAdapter(Context context, int layoutResId, List<T> list) {
         this(context, layoutResId);
         addData(list);
+    }
+
+
+    // 添加数据源
+    public void addData(List<T> data) {
+        mDatas.addAll(data);
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemViewType(int position) {
         // 最后一个item设置为FooterView
-        if (position + 1 == getItemCount()) {
+        if (position == mDatas.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
         }
     }
 
-    // 获取数据源个数
+    // 获取item的总数量(数据源+脚布局)
     @Override
     public int getItemCount() {
         return mDatas.size()+1;
@@ -96,6 +107,7 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
             return new FootViewHolder(view);
         } else {
             View itemView = mInflater.inflate(mLayoutResId, parent, false);
+            // 设置item的点击事件
             itemView.setOnClickListener(this);
             return new ViewHolder(itemView);
         }
@@ -103,7 +115,7 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
     }
 
     // 绑定ViewHolder 需要定义抽象方法来实现里面的操作，
-    // 所以RecyclerViewBaseAdapter需要声明成抽象类
+    // 所以LoadMoreLinearBaseAdapter需要声明成抽象类
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
@@ -129,8 +141,6 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.VISIBLE);
                     break;
 
-                default:
-                    break;
             }
         } else {
 
@@ -140,68 +150,13 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
     }
 
 
-    //用来标记是否正在向上滑动
-    private boolean isSlidingUpward = false;
-
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mRecyclerView = recyclerView;
-
-        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-
-        if (manager instanceof GridLayoutManager) {
-            final GridLayoutManager gridManager = ((GridLayoutManager) manager);
-            gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    // 如果当前是footer的位置，那么该item占据2个单元格，正常情况下占据1个单元格
-                    return getItemViewType(position) == TYPE_FOOTER ? gridManager.getSpanCount() : 1;
-                }
-            });
-        }
-
-
-
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-
-                // 当不滑动时
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    //获取最后一个完全显示的itemPosition
-                    int lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
-                    int itemCount = layoutManager.getItemCount();
-
-                    // 判断是否滑动到了最后一个item，并且是向上滑动
-                    if (lastItemPosition == (itemCount - 1) && isSlidingUpward) {
-                        //加载更多
-                        loadMoreListener.onloadMore();
-                    }
-                }
-
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                // 大于0表示正在向上滑动，小于等于0表示停止或向下滑动
-                isSlidingUpward = dy > 0;
-            }
-        });
     }
 
 
-
-    // 添加数据源
-    public void addData(List<T> data) {
-        mDatas.addAll(data);
-        notifyDataSetChanged();
-    }
 
     // 清空数据源
     public void clearAll() {
@@ -216,15 +171,15 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
     public void onClick(View v) {
         int position = mRecyclerView.getChildAdapterPosition(v);
         T t = mDatas.get(position);
-        if (listener != null) {
-            listener.onClick(t, position);
+        if (mListener != null) {
+            mListener.onClick(t, position);
         }
     }
 
     // 脚布局ViewHoldr类
-    private static class FootViewHolder extends LoadMoreBaseAdapter.ViewHolder {
+    private static class FootViewHolder extends LoadMoreLinearBaseAdapter.ViewHolder {
 
-        public FootViewHolder(View itemView) {
+        FootViewHolder(View itemView) {
             super(itemView);
         }
     }
@@ -253,11 +208,11 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
             return getView(id);
         }
 
-        public Button getImageButton(int id) {
+        public Button getButton(int id) {
             return getView(id);
         }
 
-        public ImageButton getButton(int id) {
+        public ImageButton getImageButton(int id) {
             return getView(id);
         }
 
@@ -296,28 +251,15 @@ public abstract class LoadMoreBaseAdapter<T> extends RecyclerView.Adapter<LoadMo
         return mContext;
     }
 
-    public int getmLayoutResId() {
-        return mLayoutResId;
-    }
 
     // 设置Item的点击事件
     public void setOnItemClickListener(OnItemClickListener<T> listener) {
-        this.listener = listener;
+        this.mListener = listener;
     }
 
     public interface OnItemClickListener<T> {
         // 传递当前点击的对象（List对应位置的数据）与位置
         void onClick(T t, int position);
-    }
-
-    public interface OnLoadMoreListener {
-        // 传递当前点击的对象（List对应位置的数据）与位置
-        void onloadMore();
-    }
-
-    // 设置Item的点击事件
-    public void setOnLoadMoreListener(OnLoadMoreListener listener) {
-        this.loadMoreListener = listener;
     }
 
     /**
