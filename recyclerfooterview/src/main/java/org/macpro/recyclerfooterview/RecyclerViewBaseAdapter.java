@@ -10,6 +10,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -119,15 +121,23 @@ public abstract class RecyclerViewBaseAdapter<T> extends RecyclerView.Adapter<Re
             return getView(id);
         }
 
-        public Button getImageButton(int id) {
+        public Button getButton(int id) {
             return getView(id);
         }
 
-        public ImageButton getButton(int id) {
+        public ImageButton getImageButton(int id) {
             return getView(id);
         }
 
         public CheckBox getCheckBox(int id) {
+            return getView(id);
+        }
+
+        public ProgressBar getProgressBar(int id) {
+            return getView(id);
+        }
+
+        public LinearLayout getLinearLayout(int id) {
             return getView(id);
         }
 

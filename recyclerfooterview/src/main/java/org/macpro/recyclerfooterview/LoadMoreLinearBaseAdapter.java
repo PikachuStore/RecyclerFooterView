@@ -1,8 +1,6 @@
 package org.macpro.recyclerfooterview;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,10 +44,8 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
     private final int TYPE_FOOTER = 2;
 
 
-
     // 当前加载状态，默认为加载完成
     private int loadState = 2;
-
 
 
     // 正在加载
@@ -58,7 +54,6 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
     public final int LOADING_COMPLETE = 2;
     // 加载到底
     public final int LOADING_END = 3;
-
 
 
     public LoadMoreLinearBaseAdapter(Context context, int layoutResId) {
@@ -94,7 +89,7 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
     // 获取item的总数量(数据源+脚布局)
     @Override
     public int getItemCount() {
-        return mDatas.size()+1;
+        return mDatas.size() + 1;
     }
 
     // 创建ViewHolder
@@ -103,7 +98,7 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
 
         //进行判断显示类型，来创建返回不同的View
         if (viewType == TYPE_FOOTER) {
-            View view =  mInflater.inflate(R.layout.layout_refresh_footer, parent, false);
+            View view = mInflater.inflate(R.layout.layout_refresh_footer, parent, false);
             return new FootViewHolder(view);
         } else {
             View itemView = mInflater.inflate(mLayoutResId, parent, false);
@@ -155,7 +150,6 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
         super.onAttachedToRecyclerView(recyclerView);
         mRecyclerView = recyclerView;
     }
-
 
 
     // 清空数据源
