@@ -65,7 +65,7 @@ public abstract class RecyclerViewBaseAdapter<T> extends RecyclerView.Adapter<Re
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         // 需要子类去实现 具体操作
-        bind(holder, mDatas.get(position));
+        bind(holder, mDatas.get(position),position);
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class RecyclerViewBaseAdapter<T> extends RecyclerView.Adapter<Re
     }
 
 
-    public abstract void bind(ViewHolder holder, T t);
+    public abstract void bind(ViewHolder holder, T t , int position);
 
     @Override
     public void onClick(View v) {
