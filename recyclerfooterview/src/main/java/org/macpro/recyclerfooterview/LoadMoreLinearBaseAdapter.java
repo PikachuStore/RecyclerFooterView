@@ -140,7 +140,7 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
         } else {
 
             // 需要子类去实现 具体操作
-            bind(holder, mDatas.get(position));
+            bind(holder, mDatas.get(position),position);
         }
     }
 
@@ -159,7 +159,7 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
     }
 
 
-    public abstract void bind(ViewHolder holder, T t);
+    public abstract void bind(ViewHolder holder, T t,int position);
 
     @Override
     public void onClick(View v) {
