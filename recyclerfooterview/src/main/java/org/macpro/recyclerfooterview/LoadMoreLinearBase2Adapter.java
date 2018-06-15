@@ -59,7 +59,7 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     }
 
 
-    public LoadMoreLinearBase2Adapter(Context context, int layoutResId, List<T> list) {
+    public LoadMoreLinearBase2Adapter(Context context, List<T> list) {
         this(context);
         addData(list);
     }
