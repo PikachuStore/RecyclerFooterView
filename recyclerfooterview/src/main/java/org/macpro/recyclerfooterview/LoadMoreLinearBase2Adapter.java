@@ -28,8 +28,6 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     private List<T> mDatas;
     // 布局填充器
     private LayoutInflater mInflater;
-    // item的布局资源
-    private int mLayoutResId;
     // Attach的RecyclerView
     private RecyclerView mRecyclerView;
     // item的点击事件
@@ -54,16 +52,15 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     public final int LOADING_END = 3;
 
 
-    public LoadMoreLinearBase2Adapter(Context context, int layoutResId) {
+    public LoadMoreLinearBase2Adapter(Context context) {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mLayoutResId = layoutResId;
         mDatas = new ArrayList<>();
         mContext = context;
     }
 
 
     public LoadMoreLinearBase2Adapter(Context context, int layoutResId, List<T> list) {
-        this(context, layoutResId);
+        this(context);
         addData(list);
     }
 
