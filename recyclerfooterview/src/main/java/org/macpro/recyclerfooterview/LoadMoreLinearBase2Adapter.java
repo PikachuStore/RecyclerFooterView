@@ -269,4 +269,8 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
         notifyDataSetChanged();
     }
 
+
+    public LayoutInflater getmInflater() {
+        return mInflater;
+    }
 }
