@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Created by Konfyt on 2016/9/14.
  */
-public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter<LoadMoreLinearBase2Adapter.ViewHolder> implements View.OnClickListener {
+public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter<LoadMoreLinearBase2Adapter.ViewHolder> {
 
     // 数据源
     private List<T> mDatas;
@@ -30,8 +30,6 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     private LayoutInflater mInflater;
     // Attach的RecyclerView
     private RecyclerView mRecyclerView;
-    // item的点击事件
-    private OnItemClickListener mListener;
     // 上下文对象
     private Context mContext;
 
@@ -159,15 +157,6 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     }
 
 
-    @Override
-    public void onClick(View v) {
-        int position = mRecyclerView.getChildAdapterPosition(v);
-        T t = mDatas.get(position);
-        if (mListener != null) {
-            mListener.onClick(t, position);
-        }
-    }
-
     // 脚布局ViewHoldr类
     private static class FootViewHolder extends LoadMoreLinearBase2Adapter.ViewHolder {
 
@@ -243,16 +232,6 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
         return mContext;
     }
 
-
-    // 设置Item的点击事件
-    public void setOnItemClickListener(OnItemClickListener<T> listener) {
-        this.mListener = listener;
-    }
-
-    public interface OnItemClickListener<T> {
-        // 传递当前点击的对象（List对应位置的数据）与位置
-        void onClick(T t, int position);
-    }
 
     /**
      * 设置上拉加载状态
