@@ -162,8 +162,6 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     }
 
 
-    public abstract void bind(ViewHolder holder, T t, int position);
-
     @Override
     public void onClick(View v) {
         int position = mRecyclerView.getChildAdapterPosition(v);
