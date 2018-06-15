@@ -38,10 +38,8 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     private Context mContext;
 
 
-    // 默认布局
-    private final int TYPE_ITEM = 1;
     // 脚布局
-    private final int TYPE_FOOTER = 2;
+    private final int TYPE_FOOTER = 254545;
 
 
     // 当前加载状态，默认为加载完成
