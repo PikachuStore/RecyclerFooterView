@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.Map;
 /**
  * Created by Konfyt on 2016/9/14.
  */
-public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter<LoadMoreLinearBase2Adapter.ViewHolder> {
+public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter<LoadMoreLinearBase2Adapter.ViewHolder> implements View.OnClickListener {
 
     // 数据源
     private List<T> mDatas;
@@ -32,10 +33,14 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     private RecyclerView mRecyclerView;
     // 上下文对象
     private Context mContext;
+    // item的点击事件
+    private OnItemClickListener mListener;
+    // error的点击事件
+    private OnFooterErrorListener mErrorListener;
 
 
     // 脚布局
-    private final int TYPE_FOOTER = 254545;
+    private final int TYPE_FOOTER = Integer.MAX_VALUE;
 
 
     // 当前加载状态，默认为加载完成
@@ -43,11 +48,13 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
 
 
     // 正在加载
-    public final int LOADING = 1;
+    private final int LOADING = 1;
     // 加载完成
-    public final int LOADING_COMPLETE = 2;
+    private final int LOAD_COMPLETE = 2;
     // 加载到底
-    public final int LOADING_END = 3;
+    private final int LOAD_END = 3;
+    // 加载到底
+    private final int LOAD_ERROR = 4;
 
 
     public LoadMoreLinearBase2Adapter(Context context) {
@@ -79,8 +86,7 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
         }
     }
 
-
-    // 自定义的ViewType
+    // 多布局的ViewType
     public abstract int getCustomItemViewType(int position);
 
     // 获取item的总数量(数据源+脚布局)
@@ -96,13 +102,24 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
         //进行判断显示类型，来创建返回不同的View
         if (viewType == TYPE_FOOTER) {
             View view = mInflater.inflate(R.layout.layout_refresh_footer, parent, false);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mErrorListener != null && loadState == LOAD_ERROR) {
+                        mErrorListener.onClick();
+                    }
+                }
+            });
             return new FootViewHolder(view);
         } else {
-            return onCreateCustomViewHolder(parent, viewType);
+            ViewHolder viewHolder = onCreateCustomViewHolder(parent, viewType);
+            viewHolder.itemView.setOnClickListener(this);
+            return viewHolder;
         }
 
     }
 
+    // 创建多布局的ViewHolder
     public abstract ViewHolder onCreateCustomViewHolder(ViewGroup parent, int viewType);
 
     // 绑定ViewHolder 需要定义抽象方法来实现里面的操作，
@@ -118,29 +135,38 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.VISIBLE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.VISIBLE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.GONE);
                     break;
 
-                case LOADING_COMPLETE: // 加载完成
+                case LOAD_COMPLETE: // 加载完成
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.INVISIBLE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.INVISIBLE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.GONE);
                     break;
 
-                case LOADING_END: // 加载到底
+                case LOAD_END: // 加载到底
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.GONE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.GONE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.VISIBLE);
+                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.GONE);
+                    break;
+                case LOAD_ERROR: // 加载出错
+                    footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.GONE);
+                    footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.VISIBLE);
                     break;
 
             }
         } else {
 
             // 需要子类去实现 具体操作
-            onCustomBindViewHolder(holder, position);
+            onBindCustomViewHolder(holder, position);
         }
     }
 
-    public abstract void onCustomBindViewHolder(ViewHolder holder, int position);
+    public abstract void onBindCustomViewHolder(ViewHolder holder, int position);
 
 
     @Override
@@ -154,6 +180,15 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     public void clearAll() {
         mDatas.clear();
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int position = mRecyclerView.getChildAdapterPosition(v);
+        T t = mDatas.get(position);
+        if (mListener != null) {
+            mListener.onClick(t, position);
+        }
     }
 
 
@@ -209,6 +244,10 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
             return getView(id);
         }
 
+        public RelativeLayout getRelativeLayout(int id) {
+            return getView(id);
+        }
+
         public <T extends View> T getView(int resId) {
             View view = null;
             if (mCacheViews.containsKey(resId)) {
@@ -222,6 +261,16 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     }
 
 
+    /**
+     * 设置上拉加载状态
+     *
+     * @param loadState 0.正在加载 1.加载完成 2.加载到底
+     */
+    public void setLoadState(LoadingState loadState) {
+        this.loadState = loadState.getmState();
+        notifyDataSetChanged();
+    }
+
     // 对外提供获取数据源的方法
     public List<T> getmDatas() {
         return mDatas;
@@ -232,19 +281,29 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
         return mContext;
     }
 
+    // 对外提供获取布局填充器的方法
+    public LayoutInflater getmInflater() {
+        return mInflater;
+    }
 
-    /**
-     * 设置上拉加载状态
-     *
-     * @param loadState 0.正在加载 1.加载完成 2.加载到底
-     */
-    public void setLoadState(int loadState) {
-        this.loadState = loadState;
-        notifyDataSetChanged();
+    // 对外提供设置item的监听器的方法
+    public void setOnItemClickListener(OnItemClickListener mListener) {
+        this.mListener = mListener;
+    }
+
+    // 对外提供设置footer的监听器的方法
+    public void setOnFooterErrorListener(OnFooterErrorListener mErrorListener) {
+        this.mErrorListener = mErrorListener;
     }
 
 
-    public LayoutInflater getmInflater() {
-        return mInflater;
+    public interface OnItemClickListener<T> {
+        // 传递当前点击的对象（List对应位置的数据）与位置
+        void onClick(T t, int position);
+    }
+
+    // foot 错误的事件
+    public interface OnFooterErrorListener {
+        void onClick();
     }
 }

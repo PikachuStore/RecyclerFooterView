@@ -14,4 +14,8 @@ public enum LoadingState {
     LoadingState(int state) {
         this.mState = state;
     }
+
+    public int getmState() {
+        return mState;
+    }
 }
