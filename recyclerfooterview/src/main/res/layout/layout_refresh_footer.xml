@@ -6,23 +6,14 @@
     android:orientation="horizontal">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ll_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:layout_marginTop="15dp"
-        android:gravity="center_vertical"
+        android:layout_margin="15dp"
+        android:gravity="center"
         android:orientation="horizontal"
         android:visibility="gone">
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:alpha="0.5" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -33,6 +24,45 @@
             android:textColor="#a4a9b0"
             android:textSize="14dp" />
 
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0.3dp"
+            android:layout_weight="1"
+            android:alpha="0.5"
+            android:background="#a4a9b0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/no_data_discribe"
+            android:textColor="#a4a9b0"
+            android:textSize="14dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0.3dp"
+            android:layout_weight="1"
+            android:background="#a4a9b0" />
+
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -40,31 +70,20 @@
 
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/pb_loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateDrawable="@drawable/progressbar_refresh" />
-
-    <TextView
-        android:id="@+id/tv_loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/loading"
-        android:textColor="#a4a9b0"
-        android:textSize="12dp" />
 
     <LinearLayout
         android:id="@+id/ll_end"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:layout_marginTop="15dp"
+        android:layout_margin="15dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <View
             android:layout_width="0dp"
@@ -88,6 +107,26 @@
             android:layout_weight="1"
             android:background="#a4a9b0" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
     </LinearLayout>
+
+
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@drawable/progressbar_refresh" />
+
+    <TextView
+        android:id="@+id/tv_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/loading"
+        android:textColor="#a4a9b0"
+        android:textSize="12dp" />
 
 </LinearLayout>
