@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -58,6 +59,8 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
     private final int LOAD_END = 3;
     // 加载到底
     private final int LOAD_ERROR = 4;
+    // 加载无数据
+    private final int LOAD_NODATA = 5;
 
 
     public LoadMoreLinearBaseAdapter(Context context, int layoutResId) {
@@ -134,29 +137,39 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.VISIBLE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.VISIBLE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
-                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_no_data).setVisibility(View.GONE);
+                    footViewHolder.getRelativeLayout(R.id.ll_error).setVisibility(View.GONE);
                     break;
 
                 case LOAD_COMPLETE: // 加载完成
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.INVISIBLE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.INVISIBLE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
-                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_no_data).setVisibility(View.GONE);
+                    footViewHolder.getRelativeLayout(R.id.ll_error).setVisibility(View.GONE);
                     break;
 
                 case LOAD_END: // 加载到底
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.GONE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.GONE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.VISIBLE);
-                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_no_data).setVisibility(View.GONE);
+                    footViewHolder.getRelativeLayout(R.id.ll_error).setVisibility(View.GONE);
                     break;
                 case LOAD_ERROR: // 加载出错
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.GONE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.GONE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
-                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.VISIBLE);
+                    footViewHolder.getLinearLayout(R.id.ll_no_data).setVisibility(View.GONE);
+                    footViewHolder.getRelativeLayout(R.id.ll_error).setVisibility(View.VISIBLE);
                     break;
-
+                case LOAD_NODATA:
+                    footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.GONE);
+                    footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_no_data).setVisibility(View.VISIBLE);
+                    footViewHolder.getRelativeLayout(R.id.ll_error).setVisibility(View.GONE);
+                    break;
             }
         } else {
 
@@ -240,6 +253,10 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
         }
 
         public LinearLayout getLinearLayout(int id) {
+            return getView(id);
+        }
+
+        public RelativeLayout getRelativeLayout(int id) {
             return getView(id);
         }
 
