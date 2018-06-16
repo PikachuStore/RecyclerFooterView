@@ -2,5 +2,6 @@
     <string name="app_name">RefreshRecyclerView</string>
     <string name="end_discribe">我是有底线的</string>
     <string name="error_discribe">点击加载更多</string>
+    <string name="no_data_discribe">无数据</string>
     <string name="loading">加载中...</string>
 </resources>
