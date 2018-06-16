@@ -7,7 +7,7 @@ package org.macpro.recyclerfooterview;
 public enum LoadingState {
 
     // 加载中、加载完成、加载到底、加载出错了
-    LOADING(1), LOAD_COMPLETE(2), LOAD_END(3), LOAD_ERROR(4);
+    LOADING(1), LOAD_COMPLETE(2), LOAD_END(3), LOAD_ERROR(4), LOAD_NODATA(5);
 
     private int mState;
 
