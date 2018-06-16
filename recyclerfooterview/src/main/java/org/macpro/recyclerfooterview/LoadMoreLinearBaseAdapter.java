@@ -34,6 +34,8 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
     private RecyclerView mRecyclerView;
     // item的点击事件
     private OnItemClickListener mListener;
+    // error的点击事件
+    private OnFooterErrorListener mErrorListener;
     // 上下文对象
     private Context mContext;
 
@@ -51,9 +53,11 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
     // 正在加载
     public final int LOADING = 1;
     // 加载完成
-    public final int LOADING_COMPLETE = 2;
+    private final int LOAD_COMPLETE = 2;
     // 加载到底
-    public final int LOADING_END = 3;
+    private final int LOAD_END = 3;
+    // 加载到底
+    private final int LOAD_ERROR = 4;
 
 
     public LoadMoreLinearBaseAdapter(Context context, int layoutResId) {
@@ -99,6 +103,14 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
         //进行判断显示类型，来创建返回不同的View
         if (viewType == TYPE_FOOTER) {
             View view = mInflater.inflate(R.layout.layout_refresh_footer, parent, false);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mErrorListener != null && loadState == LOAD_ERROR) {
+                        mErrorListener.onClick();
+                    }
+                }
+            });
             return new FootViewHolder(view);
         } else {
             View itemView = mInflater.inflate(mLayoutResId, parent, false);
@@ -122,25 +134,34 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.VISIBLE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.VISIBLE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.GONE);
                     break;
 
-                case LOADING_COMPLETE: // 加载完成
+                case LOAD_COMPLETE: // 加载完成
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.INVISIBLE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.INVISIBLE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.GONE);
                     break;
 
-                case LOADING_END: // 加载到底
+                case LOAD_END: // 加载到底
                     footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.GONE);
                     footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.GONE);
                     footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.VISIBLE);
+                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.GONE);
+                    break;
+                case LOAD_ERROR: // 加载出错
+                    footViewHolder.getProgressBar(R.id.pb_loading).setVisibility(View.GONE);
+                    footViewHolder.getTextView(R.id.tv_loading).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_end).setVisibility(View.GONE);
+                    footViewHolder.getLinearLayout(R.id.ll_error).setVisibility(View.VISIBLE);
                     break;
 
             }
         } else {
 
             // 需要子类去实现 具体操作
-            bind(holder, mDatas.get(position),position);
+            bind(holder, mDatas.get(position), position);
         }
     }
 
@@ -159,7 +180,7 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
     }
 
 
-    public abstract void bind(ViewHolder holder, T t,int position);
+    public abstract void bind(ViewHolder holder, T t, int position);
 
     @Override
     public void onClick(View v) {
@@ -235,6 +256,17 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
     }
 
 
+    /**
+     * 设置上拉加载状态
+     *
+     * @param loadState 0.正在加载 1.加载完成 2.加载到底
+     */
+    public void setLoadState(LoadingState loadState) {
+        this.loadState = loadState.getmState();
+        notifyDataSetChanged();
+    }
+
+
     // 对外提供获取数据源的方法
     public List<T> getmDatas() {
         return mDatas;
@@ -251,19 +283,18 @@ public abstract class LoadMoreLinearBaseAdapter<T> extends RecyclerView.Adapter<
         this.mListener = listener;
     }
 
+    // 对外提供设置footer的监听器的方法
+    public void setOnFooterErrorListener(OnFooterErrorListener mErrorListener) {
+        this.mErrorListener = mErrorListener;
+    }
+
     public interface OnItemClickListener<T> {
         // 传递当前点击的对象（List对应位置的数据）与位置
         void onClick(T t, int position);
     }
 
-    /**
-     * 设置上拉加载状态
-     *
-     * @param loadState 0.正在加载 1.加载完成 2.加载到底
-     */
-    public void setLoadState(int loadState) {
-        this.loadState = loadState;
-        notifyDataSetChanged();
+    // foot 错误的事件
+    public interface OnFooterErrorListener {
+        void onClick();
     }
-
 }
