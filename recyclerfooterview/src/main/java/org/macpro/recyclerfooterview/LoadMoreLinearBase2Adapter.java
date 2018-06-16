@@ -287,7 +287,7 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     }
 
     // 对外提供设置item的监听器的方法
-    public void setOnItemClickListener(OnItemClickListener mListener) {
+    public void setOnItemClickListener(OnItemClickListener<T> mListener) {
         this.mListener = mListener;
     }
 
