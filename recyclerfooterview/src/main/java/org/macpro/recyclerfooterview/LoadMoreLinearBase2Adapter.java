@@ -53,7 +53,7 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
     private final int LOAD_COMPLETE = 2;
     // 加载到底
     private final int LOAD_END = 3;
-    // 加载到底
+    // 加载出错
     private final int LOAD_ERROR = 4;
     // 加载无数据
     private final int LOAD_NODATA = 5;
