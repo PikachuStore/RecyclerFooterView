@@ -24,7 +24,6 @@ import java.util.Map;
  */
 public abstract class RecyclerViewBaseAdapter<T> extends RecyclerView.Adapter<RecyclerViewBaseAdapter.ViewHolder> implements View.OnClickListener {
 
-    // 因为是个基类所以不能用private
     private List<T> mDatas;
     private LayoutInflater mInflater;
     private int mLayoutResId;
