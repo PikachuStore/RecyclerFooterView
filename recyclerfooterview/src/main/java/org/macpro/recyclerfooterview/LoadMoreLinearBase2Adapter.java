@@ -274,7 +274,7 @@ public abstract class LoadMoreLinearBase2Adapter<T> extends RecyclerView.Adapter
 
 
     /**
-     * 设置上拉加载状态
+     * 设置加载的状态
      *
      * @param loadState 0.正在加载 1.加载完成 2.加载到底
      */
